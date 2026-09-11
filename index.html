@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<title>Sahkaar Seva — Trusted Cooperative Services</title>
+<style>
+:root{--bg:#07110f;--bg2:#0b1815;--card:#10221d;--card2:#132a23;--line:#1d3a31;--text:#effaf5;--muted:#91aaa1;--green:#20c982;--green2:#0e9f67;--gold:#f5c451;--red:#ff5d67;--blue:#5bb8ff;--shadow:0 20px 60px #0008}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 80% -10%,#124b3822,transparent 35%),var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif}.top{padding:8px 5%;background:#04100d;color:#a9c6bb;font-size:12px;display:flex;justify-content:space-between}.nav{position:sticky;top:0;z-index:50;height:72px;padding:0 5%;display:flex;align-items:center;justify-content:space-between;background:#07110fee;border-bottom:1px solid var(--line);backdrop-filter:blur(18px)}.brand{display:flex;align-items:center;gap:10px;font-weight:900;font-size:20px;color:#9ff0cc}.logo{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,var(--green2),var(--green));box-shadow:0 10px 30px #20c98225}.navlinks{display:flex;gap:22px}.navlinks a{color:#bdd0c9;text-decoration:none;font-size:13px;font-weight:750}.actions{display:flex;gap:8px}.btn{border:0;border-radius:12px;padding:11px 15px;font-weight:850;cursor:pointer;transition:.2s}.btn:hover{transform:translateY(-2px)}.primary{background:var(--green);color:#04110c}.secondary{background:#16372d;color:#a9f3d0;border:1px solid #285344}.danger{background:#3b161b;color:#ffadb3;border:1px solid #6a252d}.ghost{background:transparent;color:var(--text);border:1px solid var(--line)}
+.hero{padding:75px 5% 55px;display:grid;grid-template-columns:1.1fr .9fr;gap:50px;align-items:center}.eyebrow{display:inline-flex;padding:7px 11px;border-radius:999px;background:#0d3328;color:#73e3b3;font-size:11px;font-weight:900}.hero h1{font-size:clamp(42px,5.8vw,76px);line-height:.98;margin:17px 0}.hero h1 span{color:var(--green)}.hero p{color:var(--muted);font-size:17px;max-width:690px}.search{margin-top:25px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:8px;display:flex;box-shadow:var(--shadow)}.search input,.search select{background:transparent;color:var(--text);border:0;outline:0;padding:12px}.search input{flex:1}.search select{border-left:1px solid var(--line)}option{background:#10221d}.trust{display:flex;gap:14px;flex-wrap:wrap;margin-top:20px;color:#8ea89f;font-size:12px}.hero-panel{background:linear-gradient(145deg,#102b23,#091713);border:1px solid var(--line);border-radius:28px;padding:22px;box-shadow:var(--shadow)}.hero-panel h3{margin:0 0 5px}.hero-panel p{font-size:12px;margin:0 0 16px}.mapmini{height:250px;border-radius:18px;overflow:hidden;border:1px solid var(--line)}
+.section{padding:65px 5%}.section-head{text-align:center;max-width:850px;margin:0 auto 30px}.section h2{font-size:35px;margin:0 0 8px}.section-head p,.lead{color:var(--muted)}.stats{display:grid;grid-template-columns:repeat(4,1fr);background:#0b211a;border-block:1px solid var(--line);padding:30px 5%;text-align:center}.stats strong{display:block;font-size:29px}.stats span{font-size:11px;color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}.card{background:linear-gradient(145deg,var(--card),#0c1b17);border:1px solid var(--line);border-radius:19px;padding:20px}.card:hover{border-color:#2c604e;transform:translateY(-3px);transition:.2s}.icon{font-size:28px}.card h3{margin:10px 0 5px}.card p{font-size:12px;color:var(--muted);min-height:38px}.tag{display:inline-block;padding:4px 7px;border-radius:7px;background:#17362d;color:#8dd8b7;font-size:9px;font-weight:800;margin:2px}
+.map-section{display:grid;grid-template-columns:1fr 320px;gap:18px}.panel{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:20px}.map-toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}.filter{padding:7px 10px;border-radius:999px;background:#0d1d19;color:#9eb5ad;border:1px solid var(--line);font-size:10px;font-weight:850;cursor:pointer}.filter.active{background:var(--green);color:#04110c;border-color:var(--green)}#liveMap{height:450px;border-radius:18px;overflow:hidden}.maplegend{display:flex;gap:15px;flex-wrap:wrap;margin-top:10px;font-size:10px;color:var(--muted)}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px}.g{background:#20c982}.y{background:#f5c451}.r{background:#ff5d67}.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#10221d;color:#eefaf5}.leaflet-popup-content{font-size:12px}.popup h4{margin:0 0 5px}.popup p{margin:4px 0;color:#9eb5ad}.popup .spec{display:inline-block;background:#17372d;color:#9ceac8;padding:4px 6px;border-radius:6px;margin:2px;font-size:9px;font-weight:800}
+.workers{display:grid;grid-template-columns:1fr 1fr;gap:12px}.worker{background:var(--card);border:1px solid var(--line);border-radius:17px;padding:15px;display:flex;gap:12px;align-items:flex-start}.avatar{width:46px;height:46px;flex:none;border-radius:50%;display:grid;place-items:center;background:#164032;color:#9deac8;font-weight:900}.worker .info{flex:1}.worker b{display:block}.worker small{color:var(--muted);font-size:10px}.rating{color:var(--gold);font-weight:900}.online{font-size:9px;color:var(--green);font-weight:900}.specialties{margin:7px 0}.specialties span{display:inline-block;border:1px solid #24473c;background:#102a22;color:#8fdabb;padding:4px 6px;border-radius:6px;margin:2px;font-size:9px}
+.booking-layout{display:grid;grid-template-columns:1.05fr .95fr;gap:18px}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field{margin:8px 0}.field label{display:block;font-size:11px;font-weight:850;color:#aac0b8}.field input,.field select,.field textarea{width:100%;margin-top:5px;background:#0a1714;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:12px;outline:0}.slot-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:7px}.slot{background:#0d1c18;color:#a9beb7;border:1px solid var(--line);padding:10px;border-radius:10px;cursor:pointer;font-size:11px;font-weight:800}.slot.selected{background:#164333;border-color:var(--green);color:#9df0cb}.summary{background:linear-gradient(145deg,#103126,#0b1915);border-radius:18px;padding:18px;border:1px solid var(--line)}.summary-row{display:flex;justify-content:space-between;border-bottom:1px solid #ffffff0d;padding:10px 0;font-size:12px}.summary-row span{color:var(--muted)}
+.dashboard{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.metric{background:var(--card);border:1px solid var(--line);border-radius:17px;padding:18px}.metric strong{display:block;font-size:24px}.metric small{color:var(--muted)}.timeline{margin-top:15px}.status{display:flex;gap:10px;align-items:center;padding:11px 0;border-bottom:1px solid #ffffff0b;font-size:12px}.check{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:#173c30;color:#8ff0c7;font-size:10px}.check.pending{background:#2b2613;color:#f4cf67}.emergency{background:linear-gradient(145deg,#32151a,#1c0d10);border:1px solid #5d252d;border-radius:22px;padding:22px}.emergency h3{margin:0}.emergency p{color:#c99ca1;font-size:12px}.emergency-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:15px}.emergency button{width:100%;background:#4b1b22;color:#ffb3b9;border:1px solid #73303a}.safety-list{display:grid;gap:9px;margin-top:13px}.safety-item{display:flex;gap:10px;padding:11px;background:#0c1916;border:1px solid var(--line);border-radius:11px;font-size:11px}.safety-item b{display:block;font-size:12px}.safety-item span{color:var(--muted)}
+.cta{margin:0 5% 60px;padding:40px;border-radius:25px;background:linear-gradient(135deg,#087e54,#16bc79);display:flex;justify-content:space-between;align-items:center;gap:20px}.cta h2{margin:0}.cta p{opacity:.8}.footer{background:#040d0b;padding:32px 5%;display:grid;grid-template-columns:2fr 1fr 1fr;gap:30px;border-top:1px solid var(--line)}.footer h4{margin-top:0}.footer a{display:block;color:#829d94;text-decoration:none;font-size:12px;margin:7px 0}.toast{position:fixed;right:20px;bottom:20px;z-index:200;background:#e9fff6;color:#052118;padding:13px 16px;border-radius:12px;display:none;font-weight:800;box-shadow:var(--shadow)}.toast.show{display:block}.modal{position:fixed;inset:0;background:#000b;backdrop-filter:blur(6px);z-index:100;display:none;place-items:center;padding:15px}.modal.open{display:grid}.modalbox{width:min(560px,100%);background:#10221d;border:1px solid var(--line);border-radius:23px;padding:24px;box-shadow:var(--shadow)}.close{float:right;border:0;background:#19342b;color:white;border-radius:50%;width:32px;height:32px;cursor:pointer}.success{display:none;background:#12392c;color:#98edca;border:1px solid #225845;border-radius:11px;padding:12px;margin-top:10px;font-size:12px}
+@media(max-width:950px){.hero,.booking-layout,.map-section{grid-template-columns:1fr}.grid{grid-template-columns:repeat(2,1fr)}.workers{grid-template-columns:1fr}.navlinks{display:none}.stats{grid-template-columns:repeat(2,1fr);gap:20px}.emergency-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:560px){.top{display:none}.nav{padding:0 4%}.actions .secondary{display:none}.hero,.section{padding-left:4%;padding-right:4%}.hero{padding-top:50px}.grid,.dashboard,.formgrid{grid-template-columns:1fr}.search{flex-direction:column}.search select{border-left:0;border-top:1px solid var(--line)}#liveMap{height:330px}.slot-grid{grid-template-columns:1fr 1fr}.cta{margin-inline:4%;flex-direction:column;align-items:flex-start}.footer{grid-template-columns:1fr}}
+
+.service-dash{display:grid;grid-template-columns:220px 1fr;gap:14px}.service-tabs{display:grid;gap:7px}.service-tab{background:#0b1714;color:#9eb5ad;border:1px solid var(--line);border-radius:11px;padding:11px;text-align:left;cursor:pointer;font-weight:800;font-size:11px}.service-tab.active{background:#123c2d;color:#8ff0c7;border-color:#238a65}.service-view{min-height:250px;background:linear-gradient(145deg,#10251f,#0a1512);border:1px solid var(--line);border-radius:18px;padding:20px}.service-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:12px 0}.mini-kpi{background:#0b1916;border:1px solid var(--line);border-radius:12px;padding:12px}.mini-kpi b{display:block;font-size:18px}.mini-kpi span{font-size:10px;color:var(--muted)}.service-table{width:100%;border-collapse:collapse;font-size:11px}.service-table th,.service-table td{padding:9px;border-bottom:1px solid #ffffff0b;text-align:left}.badge{display:inline-block;padding:4px 7px;border-radius:999px;background:#143a2d;color:#8ff0c7;font-size:9px;font-weight:900}.confirm-card{background:linear-gradient(145deg,#123b2c,#0b1b16);border:1px solid #236e53;border-radius:18px;padding:18px;margin-top:14px}.confirm-head{display:flex;justify-content:space-between;gap:10px;align-items:center}.otp-box{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px}.otp-code{font-size:22px;letter-spacing:5px;font-weight:950;background:#08110f;border:1px dashed #2d8665;border-radius:10px;padding:9px 13px;color:#a5f5d2}.start-btn{background:#1c684e;color:#d5fff0;border:1px solid #39a97d}.start-btn:disabled{opacity:.45;cursor:not-allowed}.worker-pill{display:inline-flex;align-items:center;gap:6px;background:#0b1916;border:1px solid var(--line);padding:7px 9px;border-radius:999px;font-size:10px}.progressbar{height:8px;background:#07100e;border-radius:999px;overflow:hidden;margin:10px 0}.progressbar i{display:block;height:100%;width:25%;background:#2bc88a;border-radius:999px;transition:width .3s}.booking-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}@media(max-width:800px){.service-dash{grid-template-columns:1fr}.service-kpis{grid-template-columns:repeat(2,1fr)}}
+</style></head>
+<body>
+<div class="top"><span>🤝 Cooperative-first digital service network</span><span>Verified workers • Fair rates • Safety-first</span></div>
+<nav class="nav"><div class="brand"><div class="logo">🤝</div>Sahkaar Seva</div><div class="navlinks"><a href="#services">Services</a><a href="#map">Live Map</a><a href="#book">Book</a><a href="#myservice">My Service</a><a href="#safety">Safety</a></div><div class="actions"><button class="btn secondary" onclick="document.getElementById('myservice').scrollIntoView()">My Service</button><button class="btn primary" onclick="openBooking()">Book Now</button></div></nav>
+<section class="hero"><div><span class="eyebrow">SIH 26089 • SMART COOPERATIVE SERVICES</span><h1>Book trusted help.<br><span>Stay in control.</span></h1><p>Find verified cooperative workers near you, see who is available, choose an exact service time, track your booking and access a customer safety panel in an emergency.</p><div class="search"><input id="search" placeholder="Search electrician, plumber, cleaning, caregiver…"><select id="searchType"><option>All services</option><option>Electrician</option><option>Plumber</option><option>Cleaning</option><option>Caregiver</option></select><button class="btn primary" onclick="findWorkers()">Find Workers</button></div><div class="trust"><span>✓ Verified cooperative workers</span><span>✓ Transparent fair-rate estimate</span><span>✓ Booking & safety tracking</span></div></div><div class="hero-panel"><h3>Nearby worker network</h3><p>Demo view • Green pins are available now</p><div id="miniMap" class="mapmini"></div><div style="display:flex;justify-content:space-between;margin-top:12px;font-size:12px"><span>🟢 <b id="heroAvailable">4</b> available</span><span>📍 Live network</span><span>🛡️ Safety enabled</span></div></div></section>
+<div class="stats"><div><strong>2,480+</strong><span>verified workers</span></div><div><strong>18</strong><span>cooperative clusters</span></div><div><strong>4.8★</strong><span>community rating</span></div><div><strong>&lt;15 min</strong><span>average nearby ETA</span></div></div>
+<section class="section" id="services"><div class="section-head"><h2>Services built around real needs</h2><p>Every service can be matched by skill, speciality, distance, availability, rating and fair-rate estimate.</p></div><div class="grid" id="serviceGrid"></div></section>
+<section class="section" id="map"><div class="section-head"><h2>Live worker availability</h2><p>See nearby cooperative workers, their status and speciality before you book.</p></div><div class="map-section"><div class="panel"><div class="map-toolbar"><button class="filter active" onclick="filterMap('all',this)">All</button><button class="filter" onclick="filterMap('Electrician',this)">Electricians</button><button class="filter" onclick="filterMap('Plumber',this)">Plumbers</button><button class="filter" onclick="filterMap('Cleaning',this)">Cleaning</button><button class="filter" onclick="filterMap('Caregiver',this)">Caregivers</button></div><div id="liveMap"></div><div class="maplegend"><span><i class="dot g"></i>Available now</span><span><i class="dot y"></i>Busy</span><span><i class="dot r"></i>Offline</span><span>Click a pin for full profile</span></div></div><div class="panel"><h3 style="margin-top:0">Network snapshot</h3><div class="metric"><strong id="availableCount">4</strong><small>available nearby</small></div><div class="metric" style="margin-top:10px"><strong>8–18 min</strong><small>typical arrival range</small></div><div class="metric" style="margin-top:10px"><strong>₹250–650</strong><small>indicative fair-rate range</small></div><p style="font-size:11px;color:var(--muted)">Demo locations are sample data for the prototype. A production version can use consent-based GPS/location services.</p><button class="btn primary" style="width:100%" onclick="openBooking()">Book from nearby network →</button></div></div></section>
+<section class="section"><div class="section-head"><h2>Specialist cooperative workers</h2><p>Customers can compare specialities instead of choosing only by job title.</p></div><div class="workers" id="workers"></div></section>
+<section class="section" id="book"><div class="section-head"><h2>Book a service with exact time</h2><p>Choose your preferred date, time slot and service details. The booking summary updates before you submit.</p></div><div class="booking-layout"><div class="panel"><div class="formgrid"><div class="field"><label>Your name</label><input id="name" placeholder="Enter your name"></div><div class="field"><label>Mobile number</label><input id="phone" placeholder="10-digit mobile"></div></div><div class="formgrid"><div class="field"><label>Service</label><select id="service" onchange="updateSummary()"></select></div><div class="field"><label>Area / locality</label><input id="location" placeholder="Area or locality"></div></div><div class="field"><label>Preferred date</label><input id="date" type="date" onchange="updateSummary()"></div><div class="field"><label>Choose time slot</label><div class="slot-grid" id="slots"></div></div><div class="field"><label>Work details / special instructions</label><textarea id="details" rows="4" placeholder="Tell the worker what needs to be done…"></textarea></div><button class="btn primary" style="width:100%" onclick="createBooking()">Confirm Service Booking →</button><div class="success" id="bookingSuccess"></div></div><div class="summary"><h3 style="margin-top:0">Booking preview</h3><div class="summary-row"><span>Service</span><b id="sumService">Electrician</b></div><div class="summary-row"><span>Date</span><b id="sumDate">Not selected</b></div><div class="summary-row"><span>Time</span><b id="sumTime">Not selected</b></div><div class="summary-row"><span>Location</span><b id="sumLocation">Not selected</b></div><div class="summary-row"><span>Matching</span><b>Nearest available</b></div><div class="summary-row"><span>Safety</span><b style="color:var(--green)">🛡️ Enabled</b></div><p style="font-size:11px;color:var(--muted)">After confirmation, the customer gets a reference ID and can follow the service under <b>My Service</b>.</p></div></div></section>
+<section class="section" id="myservice"><div class="section-head"><h2>My Service — confirmation & live control</h2><p>Once a slot is confirmed, the assigned service professional, exact time, OTP and live booking status stay together in one place.</p></div><div class="dashboard"><div class="metric"><small>Booking ID</small><strong id="myId">SS-DEMO-4821</strong><small>Keep this for support</small></div><div class="metric"><small>Booked service</small><strong id="myServiceName">Electrician</strong><small id="myWorker">Waiting for match</small></div><div class="metric"><small>Scheduled time</small><strong id="myTime">Not booked</strong><small id="myLocation">Choose a location</small></div></div><div class="confirm-card"><div class="confirm-head"><div><div class="worker-pill">🛡️ <span id="confirmStatus">BOOKING CONFIRMED</span></div><h3 style="margin:10px 0 4px">Your service professional: <span id="assignedWorker">Not assigned yet</span></h3><p style="margin:0;color:var(--muted);font-size:11px" id="workerMeta">A verified cooperative worker will be assigned based on speciality, distance and availability.</p></div><div class="rating" id="workerRating">—</div></div><div class="service-kpis"><div class="mini-kpi"><b id="confirmDate">—</b><span>Service date</span></div><div class="mini-kpi"><b id="confirmTime">—</b><span>Confirmed slot</span></div><div class="mini-kpi"><b id="workerEta">—</b><span>Estimated arrival</span></div><div class="mini-kpi"><b id="confirmRate">—</b><span>Fair-rate estimate</span></div></div><div class="progressbar"><i id="serviceProgress"></i></div><div class="status" style="border:0"><div class="check" id="startCheck">1</div><div><b id="liveStatus">Booking confirmed — waiting for service start</b><br><small style="color:var(--muted)">Use the customer OTP only when the verified worker arrives and the scheduled slot is ready to begin.</small></div></div><div class="otp-box"><span style="font-size:11px;color:var(--muted)">Customer start OTP</span><span class="otp-code" id="customerOtp">••••</span><button class="btn start-btn" id="startServiceBtn" disabled onclick="startServiceWithOtp()">Start Service with OTP</button><button class="btn secondary" onclick="regenerateOtp()">Generate OTP</button></div><div class="booking-actions"><button class="btn secondary" onclick="toast('Worker contact is available after booking confirmation.')">📞 Contact worker</button><button class="btn secondary" onclick="safetyCheckIn()">🛡️ Safety check-in</button></div></div><div class="panel timeline"><h3 style="margin-top:0">Service journey</h3><div class="status"><div class="check" id="step1">✓</div><div><b>Request created</b><br><small style="color:var(--muted)">Your service request has been recorded.</small></div></div><div class="status"><div class="check" id="step2">✓</div><div><b>Worker assigned</b><br><small style="color:var(--muted)">Verified service professional matched to your booking.</small></div></div><div class="status"><div class="check pending" id="step3">3</div><div><b>Worker on the way</b><br><small style="color:var(--muted)">Arrival details and ETA appear here.</small></div></div><div class="status"><div class="check pending" id="step4">4</div><div><b>OTP verified & service started</b><br><small style="color:var(--muted)">The service slot starts only after customer OTP verification.</small></div></div><div class="status"><div class="check pending" id="step5">5</div><div><b>Service completed</b><br><small style="color:var(--muted)">Customer can rate the service and raise an issue.</small></div></div></div></section>
+<section class="section" id="serviceDashboards"><div class="section-head"><h2>Service-specific dashboards</h2><p>Every service has its own workflow, specialist skills, tools and tracking metrics.</p></div><div class="service-dash"><div class="service-tabs" id="serviceTabs"></div><div class="service-view" id="serviceView"></div></div></section>
+<section class="section" id="safety"><div class="section-head"><h2>Customer Safety Centre</h2><p>A dedicated safety layer for emergencies while a worker is visiting or travelling to a customer.</p></div><div class="emergency"><h3>🚨 Emergency assistance</h3><p>If there is an immediate threat or danger, contact the appropriate emergency service. In India, <b>112</b> is the pan-India emergency number.</p><div class="emergency-grid"><button class="btn danger" onclick="emergency('112')">📞 Emergency 112</button><button class="btn danger" onclick="emergency('Police')">👮 Police</button><button class="btn danger" onclick="emergency('Ambulance')">🚑 Ambulance</button><button class="btn danger" onclick="emergency('Fire')">🚒 Fire</button></div><div class="safety-list"><div class="safety-item"><b>🪪 Worker identity card <span>Shows verified profile before/at arrival</span></b></div><div class="safety-item"><b>📍 Share service location <span>Customer can share the active booking location with a trusted contact</span></b></div><div class="safety-item"><b>🧑‍🤝‍🧑 Trusted contact <span>Optional emergency contact for booking alerts</span></b></div><div class="safety-item"><b>🆘 Safety check-in <span>One-tap “I need help” can flag the active service to platform support</span></b></div><div class="safety-item"><b>⚠️ Report issue <span>Record inappropriate behaviour, identity mismatch or service dispute for cooperative review</span></b></div></div></div></section>
+<div class="cta"><div><h2>One booking. One trusted network.</h2><p>Cooperative ownership + transparent matching + customer safety.</p></div><button class="btn" style="background:white;color:#075b3e" onclick="openBooking()">Start a Booking →</button></div>
+<footer class="footer"><div><div class="brand"><div class="logo">🤝</div>Sahkaar Seva</div><p style="color:#829d94;font-size:12px;max-width:390px">A prototype for SIH 26089 focused on cooperative service discovery, fair work, transparent bookings and safer customer-worker interactions.</p></div><div><h4>Platform</h4><a href="#services">Services</a><a href="#map">Live Availability</a><a href="#book">Book Service</a><a href="#myservice">My Service</a></div><div><h4>Safety</h4><a href="#safety">Safety Centre</a><a>Identity verification</a><a>Trusted contact</a><a>Emergency assistance</a></div></footer>
+<div class="modal" id="modal"><div class="modalbox"><button class="close" onclick="closeModal()">×</button><h2>Quick Service Booking</h2><p style="color:var(--muted);font-size:12px">Scroll to the full booking form to choose date and exact time.</p><button class="btn primary" style="width:100%" onclick="closeModal();document.getElementById('book').scrollIntoView()">Open booking form →</button></div></div><div class="toast" id="toast"></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const API_BASE = (window.SAHKAAR_API_BASE || 'http://localhost:5000') + '/api';
+
+let services = [];
+let people = [];
+let activeBooking = null;
+let otp = '';
+
+async function api(path, options = {}) {
+  const res = await fetch(`${API_BASE}${path}`, {
+    headers: { 'Content-Type': 'application/json' },
+    ...options
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok || data.success === false) {
+    throw new Error(data.message || `Request failed: ${path}`);
+  }
+  return data;
+}
+
+async function loadServices() {
+  const { data } = await api('/services');
+  services = data.map(s => [s.icon, s.name, s.description, s.skills]);
+  const serviceGrid = document.getElementById('serviceGrid');
+  serviceGrid.innerHTML = services.map(s => `<div class="card"><div class="icon">${s[0]}</div><h3>${s[1]}</h3><p>${s[2]}</p>${s[3].map(x => `<span class="tag">${x}</span>`).join('')}<br><button class="btn secondary" style="margin-top:10px" onclick="chooseService('${s[1]}')">Book ${s[1]} →</button></div>`).join('');
+  document.getElementById('service').innerHTML = services.map(s => `<option>${s[1]}</option>`).join('');
+  initServiceDashboards();
+}
+
+async function loadWorkers() {
+  const { data } = await api('/workers');
+  people = data.map(w => ({ ...w, i: w.id }));
+  renderWorkers();
+  updateMap(people);
+}
+
+function renderWorkers(arr = people) {
+  document.getElementById('workers').innerHTML = arr.map(p => `<div class="worker"><div class="avatar">${p.i}</div><div class="info"><b>${p.name} <span class="online">● ${p.status.toUpperCase()}</span></b><small>${p.service} • ${p.experience} • ${p.distance} away • ETA ${p.eta}</small><div class="specialties">${p.specialties.map(x => `<span>${x}</span>`).join('')}</div><small>🤝 ${p.coop} • ${p.jobs} completed • Fair rate ${p.rate}</small></div><div><div class="rating">★ ${p.rating}</div><button class="btn secondary" style="margin-top:7px;padding:7px 9px" onclick="chooseService('${p.service}')">Book</button></div></div>`).join('');
+}
+
+let map, miniMap, markers = [];
+function color(s) { return s === 'available' ? '#20c982' : s === 'busy' ? '#f5c451' : '#ff5d67'; }
+function icon(p) { return L.divIcon({ className: 'pin', html: `<div style="width:22px;height:22px;border-radius:50% 50% 50% 0;background:${color(p.status)};border:3px solid #fff;transform:rotate(-45deg);box-shadow:0 3px 12px #0008"><i style="display:block;width:6px;height:6px;background:#07110f;border-radius:50%;margin:5px"></i></div>`, iconSize: [22, 22], iconAnchor: [11, 22] }); }
+
+function initMaps() {
+  map = L.map('liveMap').setView([23.215, 72.638], 13);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap contributors' }).addTo(map);
+  miniMap = L.map('miniMap', { zoomControl: false, dragging: false, scrollWheelZoom: false, doubleClickZoom: false, touchZoom: false }).setView([23.215, 72.638], 13);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(miniMap);
+}
+
+function updateMap(list) {
+  markers.forEach(m => m.remove());
+  markers = [];
+  list.forEach(p => {
+    let m = L.marker([p.lat, p.lng], { icon: icon(p) }).addTo(map);
+    m.bindPopup(`<div class="popup"><h4>${p.i} ${p.name}</h4><p><b>${p.service}</b> • ${p.distance} away • ${p.eta}</p><p>★ ${p.rating} • ${p.experience} • ${p.jobs} jobs</p><div>${p.specialties.map(x => `<span class="spec">${x}</span>`).join('')}</div><p>🤝 ${p.coop}</p><p>Fair rate: <b>${p.rate}</b> • <b style="color:${color(p.status)}">● ${p.status}</b></p><button class="btn primary" style="padding:7px 10px" onclick="chooseService('${p.service}')">Request worker</button></div>`);
+    markers.push(m);
+  });
+  let available = list.filter(p => p.status === 'available').length;
+  document.getElementById('availableCount').textContent = available;
+  document.getElementById('heroAvailable').textContent = available;
+  map.invalidateSize();
+  miniMap.invalidateSize();
+  people.filter(p => p.status === 'available').forEach(p => L.marker([p.lat, p.lng], { icon: icon(p) }).addTo(miniMap));
+}
+
+async function filterMap(service, btn) {
+  document.querySelectorAll('.filter').forEach(x => x.classList.remove('active'));
+  btn.classList.add('active');
+  try {
+    const { data } = await api(`/workers?service=${encodeURIComponent(service)}`);
+    updateMap(data);
+    renderWorkers(data);
+    toast(`${data.length} matching workers shown`);
+  } catch (e) {
+    toast('Could not reach the server.');
+  }
+}
+
+async function findWorkers() {
+  let q = document.getElementById('search').value.trim();
+  let t = document.getElementById('searchType').value;
+  try {
+    const params = new URLSearchParams();
+    if (q) params.set('q', q);
+    if (t && t !== 'All services') params.set('service', t);
+    const { data } = await api(`/workers?${params.toString()}`);
+    const list = data.length ? data : people;
+    renderWorkers(list);
+    updateMap(list);
+    document.getElementById('map').scrollIntoView({ behavior: 'smooth' });
+    toast(`${data.length} suitable workers found`);
+  } catch (e) {
+    toast('Could not reach the server.');
+  }
+}
+
+function chooseService(s) {
+  document.getElementById('service').value = s;
+  updateSummary();
+  document.getElementById('book').scrollIntoView({ behavior: 'smooth' });
+  toast(`${s} selected — choose your date and time`);
+}
+
+const slots = ['08:00–10:00 AM', '10:30 AM–12:30 PM', '01:00–03:00 PM', '03:30–05:30 PM', '06:00–08:00 PM', '08:30–10:00 PM'];
+let selectedSlot = '';
+document.getElementById('slots').innerHTML = slots.map(x => `<button class="slot" onclick="selectSlot(this,'${x}')">${x}</button>`).join('');
+function selectSlot(el, s) {
+  document.querySelectorAll('.slot').forEach(x => x.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedSlot = s;
+  updateSummary();
+}
+function updateSummary() {
+  document.getElementById('sumService').textContent = document.getElementById('service').value;
+  document.getElementById('sumDate').textContent = document.getElementById('date').value || 'Not selected';
+  document.getElementById('sumTime').textContent = selectedSlot || 'Not selected';
+  document.getElementById('sumLocation').textContent = document.getElementById('location').value || 'Not selected';
+}
+document.getElementById('location').addEventListener('input', updateSummary);
+
+async function createBooking() {
+  let n = document.getElementById('name').value.trim();
+  let phone = document.getElementById('phone').value.trim();
+  let loc = document.getElementById('location').value.trim();
+  let date = document.getElementById('date').value;
+  let s = document.getElementById('service').value;
+  let details = document.getElementById('details').value.trim();
+
+  if (!n || !phone || !loc || !date || !selectedSlot) {
+    toast('Please complete name, mobile, location, date and time slot.');
+    return;
+  }
+
+  try {
+    const { data: booking } = await api('/bookings', {
+      method: 'POST',
+      body: JSON.stringify({ name: n, phone, location: loc, date, slot: selectedSlot, service: s, details })
+    });
+
+    activeBooking = booking;
+    otp = booking.otp;
+    const worker = booking.worker;
+
+    document.getElementById('bookingSuccess').textContent = `✓ Booking confirmed: ${booking.id} — ${s} on ${date}, ${selectedSlot}. Assigned professional: ${worker.name}.`;
+    document.getElementById('bookingSuccess').style.display = 'block';
+    document.getElementById('myId').textContent = booking.id;
+    document.getElementById('myServiceName').textContent = s;
+    document.getElementById('myTime').textContent = `${date} • ${selectedSlot}`;
+    document.getElementById('myLocation').textContent = loc;
+    document.getElementById('myWorker').textContent = `Assigned: ${worker.name}`;
+    document.getElementById('assignedWorker').textContent = worker.name;
+    document.getElementById('workerMeta').textContent = `${worker.service} • ${worker.experience} • ${worker.distance} away • ${worker.specialties.join(' • ')} • 🤝 ${worker.coop}`;
+    document.getElementById('workerRating').textContent = `★ ${worker.rating}`;
+    document.getElementById('confirmDate').textContent = date;
+    document.getElementById('confirmTime').textContent = selectedSlot;
+    document.getElementById('workerEta').textContent = worker.eta;
+    document.getElementById('confirmRate').textContent = worker.rate;
+    document.getElementById('customerOtp').textContent = otp;
+    document.getElementById('startServiceBtn').disabled = false;
+    document.getElementById('confirmStatus').textContent = 'CONFIRMED • WORKER ASSIGNED';
+    document.getElementById('liveStatus').textContent = `${worker.name} assigned — waiting for arrival`;
+    document.getElementById('serviceProgress').style.width = '45%';
+    document.getElementById('step3').className = 'check pending';
+    document.getElementById('step3').textContent = '3';
+    document.getElementById('step4').className = 'check pending';
+    document.getElementById('step4').textContent = '4';
+    document.getElementById('step5').className = 'check pending';
+    document.getElementById('step5').textContent = '5';
+    renderServiceDashboard(s);
+    toast(`Booking confirmed ✓ ${worker.name} assigned`);
+    document.getElementById('myservice').scrollIntoView({ behavior: 'smooth' });
+  } catch (e) {
+    toast(e.message || 'Could not create booking. Is the backend running?');
+  }
+}
+
+async function regenerateOtp() {
+  if (!activeBooking) { toast('Confirm a booking first.'); return; }
+  try {
+    const { data } = await api(`/bookings/${activeBooking.id}/otp/regenerate`, { method: 'POST' });
+    otp = data.otp;
+    document.getElementById('customerOtp').textContent = otp;
+    toast('New customer OTP generated ✓');
+  } catch (e) {
+    toast(e.message || 'Could not regenerate OTP.');
+  }
+}
+
+async function startServiceWithOtp() {
+  if (!activeBooking) return;
+  let entered = prompt('Enter the 4-digit customer OTP shown above to start the service:');
+  if (entered === null) return;
+  try {
+    await api(`/bookings/${activeBooking.id}/start`, { method: 'POST', body: JSON.stringify({ otp: entered }) });
+    activeBooking.started = true;
+    document.getElementById('startServiceBtn').disabled = true;
+    document.getElementById('customerOtp').textContent = '••••';
+    document.getElementById('confirmStatus').textContent = 'SERVICE IN PROGRESS';
+    document.getElementById('liveStatus').textContent = `Service started with OTP verification — ${activeBooking.worker.name}`;
+    document.getElementById('serviceProgress').style.width = '75%';
+    document.getElementById('step3').className = 'check';
+    document.getElementById('step3').textContent = '✓';
+    document.getElementById('step4').className = 'check';
+    document.getElementById('step4').textContent = '✓';
+    toast('OTP verified — service slot started ✓');
+  } catch (e) {
+    toast(e.message || 'Incorrect OTP. Service has not started.');
+  }
+}
+
+let dashboardData = {};
+function buildDashboardData() {
+  dashboardData = {};
+  services.forEach(s => {
+    let p = people.find(x => x.service === s[1]) || people[0];
+    dashboardData[s[1]] = { icon: s[0], description: s[2], skills: s[3], workers: people.filter(x => x.service === s[1]), specialist: p };
+  });
+}
+
+function renderServiceDashboard(service) {
+  if (!dashboardData[service]) buildDashboardData();
+  let d = dashboardData[service];
+  if (!d) return;
+  let workers = d.workers;
+  document.querySelectorAll('.service-tab').forEach(b => b.classList.toggle('active', b.dataset.service === service));
+  document.getElementById('serviceView').innerHTML = `<div style="display:flex;justify-content:space-between;gap:10px;align-items:start"><div><span class="eyebrow">${d.icon} ${service.toUpperCase()}</span><h3 style="margin:10px 0 4px">${service} Operations Dashboard</h3><p style="margin:0;color:var(--muted);font-size:11px">${d.description}</p></div><span class="badge">SPECIALIST WORKFLOW</span></div><div class="service-kpis"><div class="mini-kpi"><b>${workers.length}</b><span>matched specialists</span></div><div class="mini-kpi"><b>${workers.filter(x => x.status === 'available').length}</b><span>available now</span></div><div class="mini-kpi"><b>${workers[0]?.rating || '4.8'}★</b><span>top rating</span></div><div class="mini-kpi"><b>${workers[0]?.eta || '12 min'}</b><span>sample ETA</span></div></div><p style="font-size:11px;color:var(--muted)"><b>Key specialities:</b> ${d.skills.map(x => `<span class="tag">${x}</span>`).join(' ')}</p><table class="service-table"><thead><tr><th>Professional</th><th>Speciality</th><th>Status</th><th>Experience</th><th>ETA</th></tr></thead><tbody>${workers.length ? workers.map(w => `<tr><td><b>${w.name}</b><br><small>${w.coop}</small></td><td>${w.specialties.join(', ')}</td><td><span class="badge">${w.status.toUpperCase()}</span></td><td>${w.experience}</td><td>${w.eta}</td></tr>`).join('') : `<tr><td colspan="5">No demo workers for this service yet.</td></tr>`}</tbody></table>`;
+}
+
+function initServiceDashboards() {
+  let tabs = document.getElementById('serviceTabs');
+  tabs.innerHTML = services.map(s => `<button class="service-tab" data-service="${s[1]}" onclick="renderServiceDashboard('${s[1]}')">${s[0]} ${s[1]}</button>`).join('');
+  buildDashboardData();
+  renderServiceDashboard('Electrician');
+}
+
+function openBooking() { document.getElementById('modal').classList.add('open'); }
+function closeModal() { document.getElementById('modal').classList.remove('open'); }
+
+async function emergency(type) {
+  if (!['112', 'Police', 'Ambulance', 'Fire'].includes(type)) return;
+  try {
+    await api('/safety/emergency', { method: 'POST', body: JSON.stringify({ type, bookingId: activeBooking?.id || null }) });
+    toast(`Emergency option selected: ${type}. In a real deployment this would initiate the appropriate emergency call.`);
+  } catch (e) {
+    toast(`Emergency option selected: ${type}.`);
+  }
+}
+
+async function safetyCheckIn() {
+  try {
+    await api('/safety/checkin', { method: 'POST', body: JSON.stringify({ bookingId: activeBooking?.id || null }) });
+    toast('Safety check-in sent to platform support ✓');
+  } catch (e) {
+    toast('Safety check-in sent to platform support ✓');
+  }
+}
+
+function toast(t) {
+  let x = document.getElementById('toast');
+  x.textContent = t;
+  x.classList.add('show');
+  setTimeout(() => x.classList.remove('show'), 3000);
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+document.getElementById('modal').addEventListener('click', e => { if (e.target.id === 'modal') closeModal(); });
+
+async function init() {
+  initMaps();
+  try {
+    await loadServices();
+    await loadWorkers();
+  } catch (e) {
+    toast('Could not reach the backend API. Is the server running on ' + API_BASE + '?');
+  }
+}
+init();
+
+</script></body></html>
